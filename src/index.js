@@ -163,7 +163,8 @@ server.registerTool(
     const found = (markers || []).filter((m) => text.includes(m));
     const missing = (markers || []).filter((m) => !text.includes(m));
     const staleHits = (mustNotContain || []).filter((m) => text.includes(m));
-    const verdict = missing.length === 0 && staleHits.length === 0 ? "LIVE_AND_CURRENT" : "MISMATCH";
+    const notFound = res.status >= 400;
+    const verdict = notFound ? "MISMATCH" : missing.length === 0 && staleHits.length === 0 ? "LIVE_AND_CURRENT" : "MISMATCH";
     return {
       content: [
         {
@@ -178,8 +179,10 @@ server.registerTool(
               markersMissing: missing,
               staleMarkersPresent: staleHits,
               notes: verdict === "MISMATCH"
-                ? (missing.length ? `Missing expected content: ${missing.join(", ")}. ` : "") +
-                  (staleHits.length ? `Stale content still present: ${staleHits.join(", ")}.` : "")
+                ? notFound
+                  ? `The URL returned HTTP ${res.status}, the page is not serving`
+                  : (missing.length ? `Missing expected content: ${missing.join(", ")}. ` : "") +
+                    (staleHits.length ? `Stale content still present: ${staleHits.join(", ")}.` : "")
                 : "Live content matches expectations",
             },
             null,
