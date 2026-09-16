@@ -1,6 +1,6 @@
 {
   "name": "targetly-mcp",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Deployment truth verification for AI agents. Resolves where a domain actually serves from, verifies the live content matches the build, and catches stale caches and misrouted deploys.",
   "type": "module",
   "main": "src/index.js",
@@ -27,5 +27,5 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0"
   },
-  "mcpName": "io.github.abduljabbarbxr/targetly-mcp"
+  "mcpName": "io.github.AbduljabbarBXR/targetly-mcp"
 }
