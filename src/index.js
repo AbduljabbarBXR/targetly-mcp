@@ -6,10 +6,8 @@ import { promises as dns } from "node:dns";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const server = new McpServer({
-  name: "targetly-mcp",
-  version: "0.1.0",
-});
+const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+const server = new McpServer({ name: pkg.name, version: pkg.version });
 
 function detectPlatform(host) {
   const h = host.toLowerCase();
@@ -159,7 +157,32 @@ server.registerTool(
   },
   async ({ url, markers, mustNotContain }) => {
     const u = normalizeUrl(url, "");
-    const { res, text } = await fetchText(u);
+    let res, text;
+    try {
+      ({ res, text } = await fetchText(u));
+    } catch (err) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                url: u,
+                status: null,
+                bytes: 0,
+                verdict: "UNREACHABLE",
+                markersFound: [],
+                markersMissing: markers || [],
+                staleMarkersPresent: [],
+                notes: `Could not reach the URL: ${String(err && err.message ? err.message : err).slice(0, 160)}`,
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
     const found = (markers || []).filter((m) => text.includes(m));
     const missing = (markers || []).filter((m) => !text.includes(m));
     const staleHits = (mustNotContain || []).filter((m) => text.includes(m));
@@ -205,13 +228,40 @@ server.registerTool(
   },
   async ({ url }) => {
     const u = normalizeUrl(url, "");
-    const res = await fetch(u, {
-      method: "GET",
-      redirect: "follow",
-      signal: AbortSignal.timeout(25000),
-      headers: { "user-agent": "targetly-mcp/0.1.0" },
-    });
-    await res.arrayBuffer();
+    let res;
+    try {
+      res = await fetch(u, {
+        method: "GET",
+        redirect: "follow",
+        signal: AbortSignal.timeout(25000),
+        headers: { "user-agent": "targetly-mcp/0.1.0" },
+      });
+      await res.arrayBuffer();
+    } catch (err) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                url: u,
+                status: null,
+                verdict: "UNREACHABLE",
+                cacheStatus: "no response",
+                cacheControl: null,
+                age: null,
+                etag: null,
+                lastModified: null,
+                server: null,
+                notes: `Could not reach the URL: ${String(err && err.message ? err.message : err).slice(0, 160)}`,
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
     const headers = {};
     for (const [k, v] of res.headers.entries()) headers[k] = v;
     const cf = headers["cf-cache-status"] || null;
