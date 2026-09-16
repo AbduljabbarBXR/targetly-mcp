@@ -1,0 +1,12 @@
+name: targetly-mcp
+description: Deployment truth verification for AI agents. Resolves where a domain actually serves from, verifies the live content matches the build, and catches stale caches and misrouted deploys.
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties: {}
+  commandFunction: |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', 'targetly-mcp']
+    })
