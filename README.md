@@ -1,5 +1,7 @@
 # targetly-mcp
 
+[![npm](https://img.shields.io/npm/v/targetly-mcp)](https://www.npmjs.com/package/targetly-mcp) [![license](https://img.shields.io/npm/l/targetly-mcp)](LICENSE) [![MCP](https://img.shields.io/badge/MCP-compatible-blue)](https://modelcontextprotocol.io) [![Tawakkul Labs](https://img.shields.io/badge/by-Tawakkul%20Labs-0f766e)](https://tawakkul-labs.co.ke)
+
 Deployment truth verification for AI agents. Targetly answers the question every deploy ignores: is the thing you see at the domain the thing you just built?
 
 It resolves where a domain actually serves from, verifies live content against expectations, judges whether a cache is hiding the new build, and catches the classic mistake of deploying to a platform that does not serve the domain.
@@ -70,3 +72,7 @@ npm install -g targetly-mcp
 ## License
 
 MIT. Part of the Tawakkul Labs open source family alongside HEIDES, Heides Lens, Cornea, HEIDES VOLT, and harmony-mcp.
+
+---
+
+Links: [npm](https://www.npmjs.com/package/targetly-mcp) | [GitHub](https://github.com/AbduljabbarBXR/targetly-mcp) | [Tawakkul Labs](https://tawakkul-labs.co.ke)
